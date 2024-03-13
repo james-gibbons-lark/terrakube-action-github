@@ -37,6 +37,7 @@ async function run(): Promise<void> {
 
         core.info(`Running Workspace ${workspaceFolder} with Template ${githubActionInput.terrakubeTemplate}`)
         core.info(`Checking if workspace ${workspaceFolder}`)
+        core.info('testing with forked repo')
         const organizationId = await terrakubeClient.getOrganizationId(githubActionInput.terrakubeOrganization);
 
 
