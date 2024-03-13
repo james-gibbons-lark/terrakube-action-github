@@ -34,6 +34,7 @@ export class TerrakubeClient {
         )
 
         const body: string = await response.readBody()
+        core.info(`Response body ${body}`)
         const terrakubeResponse = JSON.parse(body)
 
         core.debug(`Response size: ${terrakubeResponse.data.length}`)
