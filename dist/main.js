@@ -96,7 +96,7 @@ function run() {
                                 core.info(`Creating new job: `);
                                 const jobId = yield terrakubeClient.createJobId(organizationId, workspaceId, templateId);
                                 core.debug(`JobId: ${jobId}`);
-                                yield checkTerrakubeLogs(terrakubeClient, githubActionInput.githubToken, organizationId, jobId, workspaceFolder, githubActionInput.showOutput);
+                                yield checkTerrakubeLogs(terrakubeClient, githubActionInput.githubToken, organizationId, jobId, workspaceFolder, githubActionInput.showOutput, githubActionInput.token);
                             }
                             else {
                                 core.error(`Template not found: ${githubActionInput.terrakubeTemplate} in Organization: ${githubActionInput.terrakubeOrganization}`);
@@ -128,7 +128,7 @@ function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     });
 }
-function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId, workspaceFolder, show_output) {
+function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId, workspaceFolder, show_output, token) {
     return __awaiter(this, void 0, void 0, function* () {
         let jobResponse = yield terrakubeClient.getJobData(organizationId, jobId);
         let jobResponseJson = JSON.parse(jobResponse);
@@ -148,7 +148,7 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
             core.startGroup(`Running ${jobSteps[index].attributes.name}`);
             const response = yield httpClient.get(`${jobSteps[index].attributes.output}`,
             {
-                'Authorization': `Bearer ${this.authenticationToken}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/vnd.api+json'
             });
             
