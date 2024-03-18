@@ -146,11 +146,16 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
         let finalComment = `## Workspace: ${workspaceFolder} Status: ${jobResponseJson.data.attributes.status.toUpperCase()} \n`;
         for (let index = 0; index < Object.keys(jobSteps).length; index++) {
             core.startGroup(`Running ${jobSteps[index].attributes.name}`);
-            const response = yield httpClient.get(`${jobSteps[index].attributes.output}`);
+            const response = yield httpClient.get(`${jobSteps[index].attributes.output}`,
+            {
+                'Authorization': `Bearer ${this.authenticationToken}`,
+                'Content-Type': 'application/vnd.api+json'
+            });
+            
             core.info("logging response")
             core.info(`request to endpoint ${jobSteps[index].attributes.output}`);
             let body = yield response.readBody();
-            core.info(body);
+            core.info(`body ${body}`);
             core.endGroup();
             //const convert = new Convert();
             //const commentBody = `Logs from step: ${jobSteps[index].attributes.name} \`\`\`\n${convert.toHtml(body)}\n\`\`\` `
