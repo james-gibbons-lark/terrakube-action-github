@@ -147,6 +147,8 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
         for (let index = 0; index < Object.keys(jobSteps).length; index++) {
             core.startGroup(`Running ${jobSteps[index].attributes.name}`);
             const response = yield httpClient.get(`${jobSteps[index].attributes.output}`);
+            core.info("logging response")
+            core.info(JSON.stringify(response));
             let body = yield response.readBody();
             core.info(body);
             core.endGroup();
