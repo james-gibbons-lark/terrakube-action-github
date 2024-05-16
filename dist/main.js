@@ -161,6 +161,7 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
             const response = yield httpClient.get(`${jobSteps[index].attributes.output}`);
             let body = yield response.readBody();
             core.info(body);
+            core.info(`StatusCode ${response.message.statusCode} StatusMessage ${response.message.statusMessage}`);
             core.endGroup();
             //const convert = new Convert();
             //const commentBody = `Logs from step: ${jobSteps[index].attributes.name} \`\`\`\n${convert.toHtml(body)}\n\`\`\` `
