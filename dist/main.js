@@ -171,9 +171,12 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
             core.info("Setup Octoki client");
             const octokit = github.getOctokit(githubToken);
             core.info("Getting payload");
-            const pull_request = github.context.payload;
-            core.info("Send message");
-            yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { issue_number: pull_request.number, body: `${finalComment}` }));
+            const pull_request = github.context.payload.pull_request;
+            core.info(JSON.stringify(pull_request));
+            if (pull_request !== undefined) {
+                core.info("Send message");
+                yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { issue_number: pull_request.number, body: `${finalComment}` }));
+            }
         }
         if (jobResponseJson.data.attributes.status === "completed") {
             return true;
