@@ -147,11 +147,12 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
             yield sleep(5000);
             jobResponse = yield terrakubeClient.getJobData(organizationId, jobId);
             jobResponseJson = JSON.parse(jobResponse);
-            core.debug("Waiting for job information...");
+            core.info("Waiting for job information...");
         }
+        core.info("finished fetching job status");
         core.info(`${jobResponse}`);
         core.info(`${JSON.stringify(jobResponseJson.included)}`);
-        const httpClient = new httpm.HttpClient();
+        const httpClient = new httpm.HttpClient("TerrakubeActionGithub");
         const jobSteps = jobResponseJson.included;
         core.info(`${Object.keys(jobSteps).length}`);
         let finalComment = `## Workspace: ${workspaceFolder} Status: ${jobResponseJson.data.attributes.status.toUpperCase()} \n`;
