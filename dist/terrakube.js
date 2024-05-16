@@ -357,6 +357,7 @@ class TerrakubeClient {
             const response = yield this.httpClient.get(tfOutputUrl, {
                 'Authorization': `Bearer ${this.authenticationToken}`
             });
+            core.info(`StatusCode ${response.message.statusCode} StatusMessage ${response.message.statusMessage}`);
             return yield response.readBody();
         });
     }
