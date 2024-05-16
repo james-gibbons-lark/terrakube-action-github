@@ -37,7 +37,7 @@ const core = __importStar(require("@actions/core"));
 const httpm = __importStar(require("@actions/http-client"));
 class TerrakubeClient {
     constructor(gitHubActionInput) {
-        this.httpClient = new httpm.HttpClient("TerrakubeActionGithub");
+        this.httpClient = new httpm.HttpClient();
         this.gitHubActionInput = gitHubActionInput;
         this.authenticationToken = 'empty';
         core.info(`Creating Terrakube CLient....`);
@@ -79,7 +79,7 @@ class TerrakubeClient {
             const terrakubeResponse = JSON.parse(body);
             core.debug(`Response size: ${terrakubeResponse.data.length}`);
             if (terrakubeResponse.data.length === 0) {
-                return "";
+                return null;
             }
             else {
                 core.info(`Workspace Id: ${terrakubeResponse.data[0].id}`);
@@ -121,7 +121,32 @@ class TerrakubeClient {
             const terrakubeResponse = JSON.parse(body);
             core.debug(`Response: ${JSON.stringify(terrakubeResponse)}`);
             core.info(`Variable Id: ${terrakubeResponse.data.id}`);
-            return terrakubeResponse.data.id;
+            return terrakubeResponse.data;
+        });
+    }
+    updateWorkspaceBranch(organizationId, branch, workspaceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.authenticationToken === 'empty') {
+                this.authenticationToken = this.gitHubActionInput.token;
+            }
+            const patchWorkspaceUrl = `${this.gitHubActionInput.terrakubeEndpoint}/api/v1/organization/${organizationId}/workspace/${workspaceId}`;
+            core.debug(`PATCH ${patchWorkspaceUrl}`);
+            const response = yield this.httpClient.patch(patchWorkspaceUrl, `{
+                    "data": {
+                        "type": "workspace",
+                        "id": "${workspaceId}",
+                        "attributes": {
+                            "branch": "${branch}"
+                        }
+                    }
+                }`, {
+                'Authorization': `Bearer ${this.authenticationToken}`,
+                'Content-Type': 'application/vnd.api+json'
+            });
+            const statusCode = response.message.statusCode;
+            if (statusCode !== 204) {
+                throw Error('error updating workspace branch');
+            }
         });
     }
     getTemplateId(organizationId, templateName) {
