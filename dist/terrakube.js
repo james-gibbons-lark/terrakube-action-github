@@ -154,10 +154,12 @@ class TerrakubeClient {
             if (this.authenticationToken === 'empty') {
                 this.authenticationToken = this.gitHubActionInput.token;
             }
+            templateName = templateName.replace(' ', '&#32');
             core.debug(`GET ${this.gitHubActionInput.terrakubeEndpoint}/api/v1/organization/${organizationId}/template?filter[template]=name==${templateName}`);
             const response = yield this.httpClient.get(`${this.gitHubActionInput.terrakubeEndpoint}/api/v1/organization/${organizationId}/template?filter[template]=name==${templateName}`, {
                 'Authorization': `Bearer ${this.authenticationToken}`
             });
+            core.info(`StatusCode ${response.message.statusCode} StatusMessage ${response.message.statusMessage}`);
             const body = yield response.readBody();
             const terrakubeResponse = JSON.parse(body);
             core.debug(`Response size: ${terrakubeResponse.data.length}`);
