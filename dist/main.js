@@ -67,9 +67,10 @@ function run() {
                         const file = _c;
                         const terrakubeData = JSON.parse(yield (0, promises_1.readFile)(`${file}`, "utf8"));
                         const workspaceFolder = path_1.default.basename(path_1.default.dirname(file));
-                        core.info(`Folder ${workspaceFolder} change: ${githubActionInput.terrakubeFolder.split(" ").indexOf(workspaceFolder)}`);
+                        const containsChange = githubActionInput.terrakubeFolder.indexOf(`${workspaceFolder}/`);
+                        core.info(`Folder ${workspaceFolder} change: ${containsChange}`);
                         //Folder with terrakube.json file change
-                        if (githubActionInput.terrakubeFolder.split(" ").indexOf(workspaceFolder) > -1) {
+                        if (containsChange > -1) {
                             core.startGroup(`Execute Workspace ${workspaceFolder}`);
                             console.debug(`Processing: ${file}`);
                             core.debug(`Loaded JSON: ${JSON.stringify(terrakubeData)}`);
