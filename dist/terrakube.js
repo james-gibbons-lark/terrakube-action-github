@@ -79,7 +79,7 @@ class TerrakubeClient {
             const terrakubeResponse = JSON.parse(body);
             core.debug(`Response size: ${terrakubeResponse.data.length}`);
             if (terrakubeResponse.data.length === 0) {
-                return null;
+                return "";
             }
             else {
                 core.info(`Workspace Id: ${terrakubeResponse.data[0].id}`);
