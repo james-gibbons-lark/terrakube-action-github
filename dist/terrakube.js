@@ -348,5 +348,17 @@ class TerrakubeClient {
             return body;
         });
     }
+    getTfOutput(tfOutputUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.authenticationToken === 'empty') {
+                this.authenticationToken = this.gitHubActionInput.token;
+            }
+            core.debug(`GET ${tfOutputUrl}`);
+            const response = yield this.httpClient.get(tfOutputUrl, {
+                'Authorization': `Bearer ${this.authenticationToken}`
+            });
+            return yield response.readBody();
+        });
+    }
 }
 exports.TerrakubeClient = TerrakubeClient;
