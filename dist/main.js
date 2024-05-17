@@ -139,6 +139,7 @@ function sleep(ms) {
     });
 }
 function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId, workspaceFolder, show_output) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         let jobResponse = yield terrakubeClient.getJobData(organizationId, jobId);
         let jobResponseJson = JSON.parse(jobResponse);
@@ -174,18 +175,30 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
             const pull_request = github.context.payload;
             core.info(JSON.stringify(pull_request));
             core.info(JSON.stringify(github.context));
-            if (pull_request !== undefined) {
+            if (pull_request.number !== undefined) {
                 core.info("Send message");
                 yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { issue_number: pull_request.number, body: `${finalComment}` }));
             }
+            else if (((_a = pull_request === null || pull_request === void 0 ? void 0 : pull_request.head_commit) === null || _a === void 0 ? void 0 : _a.message) !== undefined) {
+                core.info("Send message");
+                const number = extractNumberFromString(pull_request.head_commit.message);
+                yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { issue_number: number, body: `${finalComment}` }));
+            }
         }
-        if (jobResponseJson.data.attributes.status === "completed") {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return jobResponseJson.data.attributes.status === "completed";
     });
+}
+function extractNumberFromString(inputString) {
+    // Use a regular expression to find the number after "#"
+    const match = inputString.match(/#(\d+)/);
+    // If there's a match, return the number as an integer
+    if (match) {
+        return parseInt(match[1], 10);
+    }
+    else {
+        // Return null or any other value if the number is not found
+        return null;
+    }
 }
 function setupVariable(terrakubeClient, organizationId, workspaceId, key, value) {
     return __awaiter(this, void 0, void 0, function* () {
