@@ -173,8 +173,6 @@ function checkTerrakubeLogs(terrakubeClient, githubToken, organizationId, jobId,
             const octokit = github.getOctokit(githubToken);
             core.info("Getting payload");
             const pull_request = github.context.payload;
-            core.info(JSON.stringify(pull_request));
-            core.info(JSON.stringify(github.context));
             if (pull_request.number !== undefined) {
                 core.info("Send message");
                 yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { issue_number: pull_request.number, body: `${finalComment}` }));
